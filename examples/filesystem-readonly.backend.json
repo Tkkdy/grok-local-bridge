@@ -1,0 +1,21 @@
+{
+  "name": "files",
+  "transport": "stdio",
+  "command": "C:/Program Files/nodejs/node.exe",
+  "args": [
+    "C:/MCP/filesystem/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
+    "C:/MCP/approved-test-files"
+  ],
+  "tools": [
+    {
+      "name": "read_text_file"
+    },
+    {
+      "name": "search_files"
+    }
+  ],
+  "permissions": [
+    "read"
+  ],
+  "timeout_seconds": 30
+}

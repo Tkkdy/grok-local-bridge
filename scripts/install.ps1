@@ -47,7 +47,18 @@ if (-not (Test-Path -LiteralPath $python)) {
     if ($LASTEXITCODE -ne 0) { throw 'Python installation failed.' }
     $python = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313\python.exe'
 }
-Invoke-Isolated $python @('-c','import sys; assert sys.version_info[:2] == (3, 13), "This build is verified with Python 3.13"; print("Python 3.13 detected")')
+$pythonCheck = @'
+import sys
+if sys.version_info[:2] != (3, 13):
+    raise SystemExit("This build requires Python 3.13.")
+try:
+    import tkinter
+    tkinter.Tcl()
+except Exception:
+    raise SystemExit("Python 3.13 requires working Tcl/Tk (tkinter) for the local OAuth authorization window. Install the full Python 3.13 from python.org with Tcl/Tk selected, then rerun.")
+print("Python 3.13 and Tcl/Tk detected")
+'@
+Invoke-Isolated $python @('-c', $pythonCheck)
 if ($CheckOnly) { Write-Output 'Preflight passed; no files or settings changed.'; exit 0 }
 if ($targetRoot -ne $sourceRoot) {
     if (Test-Path -LiteralPath $targetRoot) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+Detect missing Tcl/Tk before installation and report owner-window readiness in doctor. Clarify Python bootstrap commands and add a tested optional official Filesystem MCP read-only recipe. No version bump or new release.
+
 ## v0.1.0-alpha — Experimental
 
 First independent Grok Local Bridge release, derived from the reviewed Grok MCP Connect V0.1.1 RC1 source. Retains FastMCP composition, OAuth/PKCE/DCR, DPAPI, explicit grants, atomic hot reload and owned Windows lifecycle. Adds backend removal CLI, local two-process demo verification, installed-CLI state discovery, tool-call rate/audit controls, fresh-history release checks and bilingual public documentation.

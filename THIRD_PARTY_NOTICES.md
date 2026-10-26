@@ -19,3 +19,7 @@ FastMCP 4.1.3: Apache-2.0; MCP SDK 2.3.0: MIT. Their license texts are retained 
 cloudflared 2026.10.0 is Apache-2.0, downloaded from the official Cloudflare release with a pinned SHA-256 by the installer, not bundled in the source ZIP. [Cloudflare license](https://github.com/cloudflare/cloudflared/blob/2026.10.0/LICENSE). No Inspector, Node modules or external backend binaries are bundled. Supergateway (MIT) was evaluated as an alternative but is not a dependency.
 
 The project's MIT license covers its original code and retained MIT portions; it does not relicense independent dependencies.
+
+## Optional Filesystem recipe
+
+The optional manifest uses externally installed `@modelcontextprotocol/server-filesystem@2.0.1`; no npm package source or binaries are bundled and Bridge runtime requirements are unchanged. The tested optional install resolved 12 npm packages. The npm archive's license pointer has no included LICENSE file. The source snapshot declared by npm provenance has Apache-2.0/MIT transition terms; see [the recipe's license note](docs/filesystem-readonly.md). Do not silently relicense this external server as MIT.
