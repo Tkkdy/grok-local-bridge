@@ -4,9 +4,9 @@ Ask GrokBot on your phone to read an approved service on your Windows computer. 
 
 This project supplies that connection. It does not grant unrestricted access to your computer: only configured backends and explicitly approved tools are available.
 
-**v0.1.0-alpha · Experimental · Windows x64 / Python 3.13**
+**v0.1.1-alpha · Experimental · Windows x64 / Python 3.13**
 
-[中文](README.md) · [Architecture](docs/architecture.md) · [Security](docs/security.md) · [Troubleshooting](docs/troubleshooting.md) · [Validation](docs/validation.md)
+[Windows beta guide (中文)](docs/windows-beta-guide.md) · [Release changes](docs/release-v0.1.1-alpha.md) · [中文](README.md) · [Architecture](docs/architecture.md) · [Security](docs/security.md) · [Troubleshooting](docs/troubleshooting.md) · [Validation](docs/validation.md)
 
 ## Implemented and outside scope
 
@@ -35,17 +35,18 @@ The Bridge binds 127.0.0.1. Only MCP and required OAuth paths are public; admini
 
 ## Quick start
 
-Requirements: Windows x64, Python 3.13, PowerShell 5.1, outbound access to PyPI/GitHub Releases/Cloudflare. Download the source ZIP from Releases, extract it and enter `grok-local-bridge`. The installer can use `-InstallMissingPython` to invoke official winget; that branch was not tested on a Python-free machine.
+Requirements: Windows x64, full Python 3.13 with working Tcl/Tk (tkinter), PowerShell 5.1, outbound access to PyPI/GitHub Releases/Cloudflare. Download the source ZIP from Releases, extract it and enter `grok-local-bridge`. The installer can use `-InstallMissingPython` to invoke official winget; that branch was not tested on a Python-free machine.
 
 ```powershell
 $installRoot = Join-Path $env:LOCALAPPDATA 'Grok Local Bridge'
-./scripts/install.ps1 -CheckOnly
-./scripts/install.ps1 -InstallDir $installRoot
+./scripts/install.ps1 -InstallDir $installRoot -InstallMissingPython
 $manage = Join-Path $installRoot 'scripts/connect.ps1'
 & $manage -InstallDir $installRoot -CommandArgs @('doctor')
 & $manage -InstallDir $installRoot -CommandArgs @('demo')
 & $manage -InstallDir $installRoot -CommandArgs @('verify')
 ```
+
+`-InstallMissingPython` invokes winget only if Python is missing. If winget is unavailable, install full Python 3.13 from python.org with Tcl/Tk selected. Optional preflight: `./scripts/install.ps1 -CheckOnly`. Missing Tcl/Tk now fails before installation; the NuGet portable distribution has no Tk and cannot run the desktop consent window.
 
 The installer creates a separate venv, installs locked dependencies, verifies official cloudflared 2026.10.0 by SHA-256 and initializes separate state. It refuses to overwrite an existing installation. **Installation does not start public exposure.** `demo` requires empty backend config; `verify` actually calls both synthetic MCPs. A local PASS is not OAuth, HTTPS or Grok acceptance.
 
@@ -78,6 +79,8 @@ OAuth Allow requires user action. A new Quick Tunnel may change origin and requi
 
 Stop closes owned Tunnel/Gateway descendants, not all processes by name or separately hosted MCPs. The remote entry should become unreachable. Stop is not permanent revocation: a grant may remain usable if the same stable origin restarts. OAuth clients can revoke their own grant at `/revoke`. Changed Quick origins need authorization again; pending consent pages do not survive restart.
 
+The first verified real-local capability recipe is [read-only file search and reading](docs/filesystem-readonly.md). It is an optional independent MCP with a separately approved directory.
+
 ## Add/remove capabilities
 
 Use the [stdio](examples/stdio.backend.json) or [HTTP](examples/http.backend.json) template. Specify a trusted executable or literal loopback HTTP target and exact tools. Even discovery executes backend code; review its source first.
@@ -109,7 +112,7 @@ python -m venv .venv
 ./.venv/Scripts/python.exe scripts/release_check.py
 ```
 
-Windows CI uses synthetic backends and a fake Tunnel, with no account secrets. Installation needs network access; tests do not create public connections. Priorities: clean Windows VM reproduction, real GrokBot regression for the renamed release, then external stable-origin recovery. No delivery date is promised for arbitrary software/device adapters.
+Windows CI uses synthetic backends and a fake Tunnel, with no account secrets. Installation needs network access; tests do not create public connections. v0.1.0-alpha passed a real GrokBot two-synthetic-tool regression. Next is clean-Windows first installation by external testers; this development host will not simulate a clean OS again. Check the Release manifest and its exact commit's CI; external stable-origin recovery remains unverified. No delivery date is promised for arbitrary software/device adapters.
 
 ## Attribution, contribution, license
 

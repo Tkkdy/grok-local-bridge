@@ -32,6 +32,16 @@ def find_cloudflared():
                 r"C:\Program Files (x86)\cloudflared\cloudflared.exe",r"C:\Program Files\cloudflared\cloudflared.exe"]
     return next((str(Path(p).resolve()) for p in candidates if p and Path(p).is_file()),None)
 
+def owner_ui_available():
+    """Probe Tcl without opening a window or loading an owner credential."""
+    try:
+        import tkinter
+        tkinter.Tcl()
+    except Exception:
+        return False
+    return True
+
+
 def config(home): return ConnectConfig.model_validate(read_json(home/"connect.json"))
 
 def no_inline_secrets(backend):
@@ -112,8 +122,11 @@ def main():
                 raw=subprocess.run([cf,"--version"],capture_output=True,text=True,timeout=10).stdout
                 match=re.search(r"cloudflared version ([0-9.]+)",raw)
                 version=match.group(1) if match else "UNRECOGNIZED"
+            ui_ready=owner_ui_available()
             emit({"windows":os.name=="nt","python":sys.version.split()[0],"fastmcp":importlib.metadata.version("fastmcp"),
-                  "cloudflared":cf,"cloudflared_version":version,"home_exists":home.exists()})
+                  "cloudflared":cf,"cloudflared_version":version,"home_exists":home.exists(),
+                  "owner_ui_available":ui_ready,
+                  "owner_ui_hint":None if ui_ready else "Install full Python 3.13 with working Tcl/Tk for the local OAuth window."})
         elif args.command=="configure":
             if manager_alive(home): raise ValueError("stop_manager_before_tunnel_settings_change")
             settings=read_json(home/"settings.json")

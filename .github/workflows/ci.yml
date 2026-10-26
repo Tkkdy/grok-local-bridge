@@ -9,6 +9,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -21,3 +23,47 @@ jobs:
         run: python -m pytest -q --junitxml=../test-results.xml
       - name: Review publishable source
         run: python scripts/release_check.py
+      - name: Build exact-commit source candidate
+        run: python scripts/package.py --output "$env:RUNNER_TEMP/glb-candidate"
+      - name: Smoke install packaged source without public start
+        shell: pwsh
+        run: |
+          $sourceRoot = Join-Path $env:RUNNER_TEMP 'glb-install-source'
+          $installRoot = Join-Path $env:RUNNER_TEMP 'GLB candidate install'
+          Expand-Archive -LiteralPath (Join-Path $env:RUNNER_TEMP 'glb-candidate/grok-local-bridge-v0.1.1-alpha.zip') -DestinationPath $sourceRoot
+          $winPs = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          & $winPs -NoProfile -File (Join-Path $sourceRoot 'grok-local-bridge/scripts/install.ps1') -InstallDir $installRoot -SkipCloudflared
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate installation failed' }
+          if (-not (Test-Path -LiteralPath (Join-Path $installRoot 'examples/filesystem-readonly.backend.json'))) { throw 'Optional manifest missing from installation' }
+          $manage = Join-Path $installRoot 'scripts/connect.ps1'
+          & $manage -InstallDir $installRoot -CommandArgs @('doctor')
+          if ($LASTEXITCODE -ne 0) { throw 'doctor failed' }
+          & $manage -InstallDir $installRoot -CommandArgs @('demo')
+          if ($LASTEXITCODE -ne 0) { throw 'demo failed' }
+          $verification = & $manage -InstallDir $installRoot -CommandArgs @('verify')
+          if ($LASTEXITCODE -ne 0 -or ($verification | ConvertFrom-Json).result -ne 'PASS_LOCAL_SYNTHETIC') { throw 'Local verification failed' }
+          $verification
+          $status = & $manage -InstallDir $installRoot -CommandArgs @('status')
+          if ($LASTEXITCODE -ne 0 -or ($status | ConvertFrom-Json).manager_alive) { throw 'Unexpected public manager' }
+      - name: Scan candidate and Git history with verified Gitleaks
+        shell: pwsh
+        run: |
+          $scanRoot = Join-Path $env:RUNNER_TEMP 'glb-gitleaks'
+          New-Item -ItemType Directory -Path $scanRoot | Out-Null
+          $archive = Join-Path $scanRoot 'scanner.zip'
+          Invoke-WebRequest -Uri 'https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'd29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e') { throw 'Scanner checksum mismatch' }
+          Expand-Archive -LiteralPath $archive -DestinationPath $scanRoot
+          $sourceRoot = Join-Path $env:RUNNER_TEMP 'glb-candidate-source'
+          Expand-Archive -LiteralPath (Join-Path $env:RUNNER_TEMP 'glb-candidate/grok-local-bridge-v0.1.1-alpha.zip') -DestinationPath $sourceRoot
+          & (Join-Path $scanRoot 'gitleaks.exe') dir $sourceRoot --redact=100 --no-banner --exit-code 1
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate source scan failed' }
+          & (Join-Path $scanRoot 'gitleaks.exe') git . --log-opts=--all --redact=100 --no-banner --exit-code 1
+          if ($LASTEXITCODE -ne 0) { throw 'History scan failed' }
+      - name: Upload candidate after all gates pass
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-v0.1.1-alpha-${{ github.sha }}
+          path: ${{ runner.temp }}/glb-candidate/*
+          if-no-files-found: error
+          retention-days: 30

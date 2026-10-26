@@ -50,7 +50,7 @@ class CapabilityBoundary(Middleware):
             self.audit("error", name)
             raise
         try:
-            self.audit("ok", name)
+            self.audit("error" if result.is_error else "ok", name)
         except OSError:
             raise ToolError("Tool completed but audit recording failed; do not automatically retry") from None
         return result

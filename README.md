@@ -4,9 +4,9 @@
 
 本项目提供这个连接入口。它不会自动获得你电脑的全部权限；只有你明确添加的 MCP 后端和工具可以被调用。
 
-**v0.1.0-alpha · Experimental · Windows x64 / Python 3.13**
+**v0.1.1-alpha · Experimental · Windows x64 / Python 3.13**
 
-[English](README_EN.md) · [架构与选型](docs/architecture.md) · [安全边界](docs/security.md) · [故障诊断](docs/troubleshooting.md) · [验收范围](docs/validation.md)
+[Windows 内测指南](docs/windows-beta-guide.md) · [版本变更](docs/release-v0.1.1-alpha.md) · [English](README_EN.md) · [架构与选型](docs/architecture.md) · [安全边界](docs/security.md) · [故障诊断](docs/troubleshooting.md) · [验收范围](docs/validation.md)
 
 ## 当前能做什么
 
@@ -35,17 +35,18 @@ Bridge 监听 `127.0.0.1`，仅公开 MCP 与必要 OAuth 路径，不提供远�
 
 ## 最快开始
 
-需要 Windows x64、Python 3.13、PowerShell 5.1，以及到 PyPI、GitHub Releases 和 Cloudflare 的出站网络。从本仓库 Release 下载源码 ZIP，解压后进入 `grok-local-bridge`。没有 Python 时可使用安装器的 `-InstallMissingPython`，这会调用官方 winget 安装；此分支未在本轮已装 Python 的主机上实测。
+需要 Windows x64、包含 Tcl/Tk（tkinter）的完整 Python 3.13、PowerShell 5.1，以及到 PyPI、GitHub Releases 和 Cloudflare 的出站网络。从本仓库 Release 下载源码 ZIP，解压后进入 `grok-local-bridge`。没有 Python 时可使用安装器的 `-InstallMissingPython`，这会调用官方 winget 安装；此分支未在本轮已装 Python 的主机上实测。
 
 ```powershell
 $installRoot = Join-Path $env:LOCALAPPDATA 'Grok Local Bridge'
-.\scripts\install.ps1 -CheckOnly
-.\scripts\install.ps1 -InstallDir $installRoot
+.\scripts\install.ps1 -InstallDir $installRoot -InstallMissingPython
 $manage = Join-Path $installRoot 'scripts\connect.ps1'
 & $manage -InstallDir $installRoot -CommandArgs @('doctor')
 & $manage -InstallDir $installRoot -CommandArgs @('demo')
 & $manage -InstallDir $installRoot -CommandArgs @('verify')
 ```
+
+`-InstallMissingPython` 仅在缺少 Python 时尝试 winget；没有 winget 时按提示手动安装 python.org 的完整 Python 3.13，并勾选 Tcl/Tk。安装前可单独运行 `scripts/install.ps1 -CheckOnly`；缺少 Tcl/Tk 会提前报错，不再等到 OAuth 窗口才失败。便携版 NuGet Python 不包含 Tk，不能完成此桌面授权流程。
 
 安装器创建独立 venv、安装锁定依赖、校验官方 cloudflared 2026.10.0 SHA-256、初始化独立状态；**安装不会启动公网服务**。拒绝覆盖已有安装。`demo` 只适用于空后端配置；`verify` 实际调用两个独立合成 MCP，成功仅代表本地协议验收。
 
@@ -78,6 +79,8 @@ $manage = Join-Path $installRoot 'scripts\connect.ps1'
 ```
 
 `stop` 关闭本安装拥有的 Tunnel、Gateway 和其子进程，不按全局进程名杀程序，也不停止独立部署的外部 MCP。停止后认证入口应不可达。停止不等于永久撤销所有持久授权；同一稳定 origin 再启动时 refresh grant 可能仍有效。OAuth 客户端可用 `/revoke` 撤销自己的 grant；Quick origin 改变需重连授权。未完成的授权页在重启后失效。
+
+已验证的首个真实本地能力配方见 [只读文件搜索与读取](docs/filesystem-readonly.md)。它是可选的独立 MCP，需要另行指定目录，不会自动开放你的文件。
 
 ## 添加或移除 MCP
 
@@ -113,7 +116,7 @@ python -m venv .venv
 
 CI 使用 Windows、合成后端和假 Tunnel，无需账号秘密。首次安装依赖需要网络；测试本身不创建公网连接。验收范围见 [validation.md](docs/validation.md)。
 
-下一步优先：干净 Windows VM 复现、改名版本真实 GrokBot 回归、稳定 origin 的外部恢复测试。没有承诺通用设备或任意程序适配器的完成时间。
+v0.1.0-alpha 已完成真实 GrokBot 双合成工具回归。下一步优先外部内测者的干净 Windows 首装；本开发机不再模拟干净系统。本预发布版的源码提交与校验值以 Release Manifest 为准，自动检查见对应提交 CI，稳定 origin 的外部恢复仍待验证。没有承诺通用设备或任意程序适配器的完成时间。
 
 ## 来源、贡献与许可证
 

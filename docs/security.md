@@ -18,7 +18,7 @@ Ingress accepts at most 64 KiB POST bodies and applies installation-wide 180 MCP
 
 ## Audit and changes
 
-Tool events contain only configured tool identifiers, outcome, time; never arguments/results, headers, token/code/cookie values or exception text. A failing pre-call audit prevents dispatch. If the tool has already completed but its completion audit cannot be saved, the client receives an ambiguous completion error: do not blindly retry a side-effecting call. The log is not tamper-evident or a complete transaction ledger.
+Tool events contain only configured tool identifiers, outcome, time; never arguments/results, headers, token/code/cookie values or exception text. A failing pre-call audit prevents dispatch. If the tool has already completed but its completion audit cannot be saved, the client receives an ambiguous completion error: do not blindly retry a side-effecting call. Backend MCP error results are recorded as error, including non-exception is_error results. Registry-level unknown/removed tool lookups can be rejected before the inner tool audit; this log is not a complete record of denied requests, tamper-evident log or transaction ledger.
 
 Config reload swaps the provider graph. New calls lose removed grants after APPLIED; in-flight calls can finish. Invalid config closes tools. Stop closes only owned jobs and the Tunnel, not independent backend services. Stop makes the remote entry unreachable while stopped; it does not revoke every stored grant permanently. Clients may use `/revoke` for their own grant. Persisted pending pages are not supported.
 
