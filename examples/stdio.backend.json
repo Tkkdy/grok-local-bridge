@@ -1,0 +1,12 @@
+{
+  "name": "notes",
+  "transport": "stdio",
+  "command": "C:\\path\\to\\python.exe",
+  "args": ["C:\\path\\to\\trusted_mcp_server.py"],
+  "cwd": "C:\\path\\to",
+  "tools": [{"name": "list_notes", "permission": "read"}],
+  "permissions": ["read"],
+  "resources": [],
+  "env_secrets": {},
+  "timeout_seconds": 30
+}

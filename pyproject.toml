@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grok-local-bridge"
+version = "0.1.0a0"
+description = "Experimental OAuth-protected bridge for approved local Windows MCP servers"
+readme = "README.md"
+authors = [{name = "Tkkdy"}]
+keywords = ["mcp", "grok", "windows", "oauth", "local-bridge"]
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.13,<3.14"
+dependencies = ["fastmcp==4.1.3"]
+
+[project.urls]
+Homepage = "https://github.com/Tkkdy/grok-local-bridge"
+Issues = "https://github.com/Tkkdy/grok-local-bridge/issues"
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1", "pytest-asyncio==1.4.0"]
+
+[project.scripts]
+grok-local-bridge = "grok_local_bridge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

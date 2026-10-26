@@ -1,0 +1,24 @@
+# Local state and private artifacts must never be published.
+.venv/
+.runtime/
+.build/
+work/
+state/
+*.dpapi
+*.sqlite*
+*.db
+.env
+.env.*
+*.pem
+*.key
+*.log
+*.jsonl
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+tools/*.exe
+tools/*.download
+.grok-local-bridge-install

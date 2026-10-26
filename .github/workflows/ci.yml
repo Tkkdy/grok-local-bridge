@@ -1,0 +1,23 @@
+name: Windows offline validation
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements.lock
+          python -m pip install --no-deps -e .
+          python -m pip check
+      - name: Synthetic local tests (no real Tunnel or accounts)
+        run: python -m pytest -q --junitxml=../test-results.xml
+      - name: Review publishable source
+        run: python scripts/release_check.py

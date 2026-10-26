@@ -1,0 +1,9 @@
+{
+  "name": "localhub",
+  "transport": "http",
+  "url": "http://127.0.0.1:8788/mcp",
+  "tools": [{"name": "get_hub_state", "permission": "read"}],
+  "permissions": ["read"],
+  "resources": [],
+  "timeout_seconds": 15
+}
