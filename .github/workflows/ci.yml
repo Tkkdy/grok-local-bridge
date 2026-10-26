@@ -31,7 +31,8 @@ jobs:
           $sourceRoot = Join-Path $env:RUNNER_TEMP 'glb-install-source'
           $installRoot = Join-Path $env:RUNNER_TEMP 'GLB candidate install'
           Expand-Archive -LiteralPath ../candidate/grok-local-bridge-v0.1.1-alpha.zip -DestinationPath $sourceRoot
-          & (Join-Path $sourceRoot 'grok-local-bridge/scripts/install.ps1') -InstallDir $installRoot -SkipCloudflared
+          $winPs = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
+          & $winPs -NoProfile -File (Join-Path $sourceRoot 'grok-local-bridge/scripts/install.ps1') -InstallDir $installRoot -SkipCloudflared
           if ($LASTEXITCODE -ne 0) { throw 'Candidate installation failed' }
           if (-not (Test-Path -LiteralPath (Join-Path $installRoot 'examples/filesystem-readonly.backend.json'))) { throw 'Optional manifest missing from installation' }
           $manage = Join-Path $installRoot 'scripts/connect.ps1'
