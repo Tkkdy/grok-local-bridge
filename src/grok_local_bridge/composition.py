@@ -13,7 +13,7 @@ def local_http_client(headers=None, timeout=None, auth=None, follow_redirects=Fa
                              trust_env=False, follow_redirects=False)
 
 def build_server(config, *, auth=None, secret_store=None, observations=None):
-    server = FastMCP("Grok Local Bridge", version="0.1.0a0", auth=auth,
+    server = FastMCP("Grok Local Bridge", version="0.1.1a0", auth=auth,
                      mask_error_details=True, tasks=False,
                      instructions="Independent local MCP capabilities; only explicitly granted tools are available.")
     server.add_middleware(CapabilityBoundary(config, observations))

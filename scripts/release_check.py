@@ -75,7 +75,7 @@ def main():
     issues.extend({"file": n, "kind": "missing_release_file"} for n in sorted(required - {p.as_posix() for p in files}))
     if (root / "pyproject.toml").exists():
         version = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
-        if version != "0.1.0a0": issues.append({"file":"pyproject.toml", "kind":"wrong_version"})
+        if version != "0.1.1a0": issues.append({"file":"pyproject.toml", "kind":"wrong_version"})
     print(json.dumps({"result":"FAIL" if issues else "PASS", "mode":mode, "files":len(files), "issues":issues,
                       "limits":"Pattern scan of publishable files; not proof against all secrets, not a full dependency vulnerability audit."}, indent=2))
     return int(bool(issues))

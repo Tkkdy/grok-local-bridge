@@ -13,7 +13,7 @@ parser.add_argument("--port", type=int)
 parser.add_argument("--audit", required=True)
 parser.add_argument("--verify-secret-fixture", action="store_true")
 args = parser.parse_args()
-mcp = FastMCP("Synthetic-" + args.kind, version="0.1.0a0", tasks=False)
+mcp = FastMCP("Synthetic-" + args.kind, version="0.1.1a0", tasks=False)
 
 def record(tool):
     # Windows CRT append is not atomic across independent processes. Serialize

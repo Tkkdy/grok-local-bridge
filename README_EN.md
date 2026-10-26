@@ -4,9 +4,9 @@ Ask GrokBot on your phone to read an approved service on your Windows computer. 
 
 This project supplies that connection. It does not grant unrestricted access to your computer: only configured backends and explicitly approved tools are available.
 
-**v0.1.0-alpha · Experimental · Windows x64 / Python 3.13**
+**v0.1.1-alpha candidate · Experimental · Windows x64 / Python 3.13**
 
-[中文](README.md) · [Architecture](docs/architecture.md) · [Security](docs/security.md) · [Troubleshooting](docs/troubleshooting.md) · [Validation](docs/validation.md)
+[Windows beta guide (中文)](docs/windows-beta-guide.md) · [Candidate changes](docs/release-v0.1.1-alpha.md) · [中文](README.md) · [Architecture](docs/architecture.md) · [Security](docs/security.md) · [Troubleshooting](docs/troubleshooting.md) · [Validation](docs/validation.md)
 
 ## Implemented and outside scope
 
@@ -112,7 +112,7 @@ python -m venv .venv
 ./.venv/Scripts/python.exe scripts/release_check.py
 ```
 
-Windows CI uses synthetic backends and a fake Tunnel, with no account secrets. Installation needs network access; tests do not create public connections. Priorities: clean Windows VM reproduction, real GrokBot regression for the renamed release, then external stable-origin recovery. No delivery date is promised for arbitrary software/device adapters.
+Windows CI uses synthetic backends and a fake Tunnel, with no account secrets. Installation needs network access; tests do not create public connections. v0.1.0-alpha passed a real GrokBot two-synthetic-tool regression. Next is clean-Windows first installation by external testers; this development host will not simulate a clean OS again. Check the exact candidate commit's CI; external stable-origin recovery remains unverified. No delivery date is promised for arbitrary software/device adapters.
 
 ## Attribution, contribution, license
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "grok-local-bridge"
-version = "0.1.0a0"
+version = "0.1.1a0"
 description = "Experimental OAuth-protected bridge for approved local Windows MCP servers"
 readme = "README.md"
 authors = [{name = "Tkkdy"}]

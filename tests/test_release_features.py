@@ -84,3 +84,24 @@ async def test_backend_error_result_is_audited_as_error(monkeypatch):
     outcomes = [e["outcome"] for e in observations.events if e.get("tool") == "guard_read_guarded"]
     assert outcomes == ["allowed", "error"]
     assert "SYNTHETIC backend refused this read" not in json.dumps(observations.events)
+
+
+@pytest.mark.parametrize("tcl_state", ["missing", "broken", "working"])
+def test_doctor_reports_owner_ui_readiness_without_creating_state(tmp_path, monkeypatch, capsys, tcl_state):
+    from types import SimpleNamespace
+    import grok_local_bridge.cli as management
+
+    def tcl():
+        if tcl_state == "broken":
+            raise RuntimeError("SYNTHETIC Tcl unavailable")
+        return object()
+    monkeypatch.setitem(sys.modules, "tkinter",
+                        None if tcl_state == "missing" else SimpleNamespace(Tcl=tcl))
+    monkeypatch.setattr(management, "find_cloudflared", lambda: None)
+    home = tmp_path / "not-initialized"
+    monkeypatch.setattr(sys, "argv", ["grok-local-bridge", "--home", str(home), "doctor"])
+    management.main()
+    result = json.loads(capsys.readouterr().out)
+    assert result["owner_ui_available"] is (tcl_state == "working")
+    assert (result["owner_ui_hint"] is None) is (tcl_state == "working")
+    assert not home.exists()

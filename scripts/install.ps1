@@ -67,7 +67,7 @@ if ($targetRoot -ne $sourceRoot) {
         } else { throw 'Installation already exists; preserve its state and use the existing version.' }
     }
     New-Item -ItemType Directory -Path $targetRoot -Force | Out-Null
-    foreach ($name in @('src','scripts','pyproject.toml','requirements-runtime.lock','THIRD_PARTY_NOTICES.md','LICENSE','licenses','README.md','README_EN.md','SECURITY.md','SKILL.md','docs','requirements.lock')) {
+    foreach ($name in @('src','scripts','pyproject.toml','requirements-runtime.lock','THIRD_PARTY_NOTICES.md','LICENSE','licenses','README.md','README_EN.md','SECURITY.md','SKILL.md','docs','examples','requirements.lock')) {
         Copy-Item -LiteralPath (Join-Path $sourceRoot $name) -Destination $targetRoot -Recurse
     }
 }
