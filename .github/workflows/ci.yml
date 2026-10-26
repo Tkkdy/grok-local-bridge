@@ -24,13 +24,13 @@ jobs:
       - name: Review publishable source
         run: python scripts/release_check.py
       - name: Build exact-commit source candidate
-        run: python scripts/package.py --output ../candidate
+        run: python scripts/package.py --output "$env:RUNNER_TEMP/glb-candidate"
       - name: Smoke install packaged source without public start
         shell: pwsh
         run: |
           $sourceRoot = Join-Path $env:RUNNER_TEMP 'glb-install-source'
           $installRoot = Join-Path $env:RUNNER_TEMP 'GLB candidate install'
-          Expand-Archive -LiteralPath ../candidate/grok-local-bridge-v0.1.1-alpha.zip -DestinationPath $sourceRoot
+          Expand-Archive -LiteralPath (Join-Path $env:RUNNER_TEMP 'glb-candidate/grok-local-bridge-v0.1.1-alpha.zip') -DestinationPath $sourceRoot
           $winPs = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
           & $winPs -NoProfile -File (Join-Path $sourceRoot 'grok-local-bridge/scripts/install.ps1') -InstallDir $installRoot -SkipCloudflared
           if ($LASTEXITCODE -ne 0) { throw 'Candidate installation failed' }
@@ -55,7 +55,7 @@ jobs:
           if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'd29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e') { throw 'Scanner checksum mismatch' }
           Expand-Archive -LiteralPath $archive -DestinationPath $scanRoot
           $sourceRoot = Join-Path $env:RUNNER_TEMP 'glb-candidate-source'
-          Expand-Archive -LiteralPath ../candidate/grok-local-bridge-v0.1.1-alpha.zip -DestinationPath $sourceRoot
+          Expand-Archive -LiteralPath (Join-Path $env:RUNNER_TEMP 'glb-candidate/grok-local-bridge-v0.1.1-alpha.zip') -DestinationPath $sourceRoot
           & (Join-Path $scanRoot 'gitleaks.exe') dir $sourceRoot --redact=100 --no-banner --exit-code 1
           if ($LASTEXITCODE -ne 0) { throw 'Candidate source scan failed' }
           & (Join-Path $scanRoot 'gitleaks.exe') git . --log-opts=--all --redact=100 --no-banner --exit-code 1
@@ -64,6 +64,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: candidate-v0.1.1-alpha-${{ github.sha }}
-          path: ../candidate/*
+          path: ${{ runner.temp }}/glb-candidate/*
           if-no-files-found: error
           retention-days: 30
