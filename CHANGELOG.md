@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Detect missing Tcl/Tk before installation and report owner-window readiness in doctor. Clarify Python bootstrap commands and add a tested optional official Filesystem MCP read-only recipe. No version bump or new release.
+Detect missing Tcl/Tk before installation and report owner-window readiness in doctor. Clarify Python bootstrap commands and add a tested optional official Filesystem MCP read-only recipe. Preserve backend MCP error results while recording their audit outcome as error instead of ok. No version bump or new release.
 
 ## v0.1.0-alpha — Experimental
 

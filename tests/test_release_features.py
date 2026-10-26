@@ -57,3 +57,30 @@ def test_release_scanner_reports_only_categories_for_private_artifacts(tmp_path)
     findings=scanner.scan(tmp_path,[Path("note.md"),Path(".env")])
     assert {f["kind"] for f in findings}=={"github_credential","forbidden_artifact"}
     assert synthetic_credential not in json.dumps(findings)
+
+
+async def test_backend_error_result_is_audited_as_error(monkeypatch):
+    from fastmcp import FastMCP
+    from fastmcp.tools import ToolResult
+    from fastmcp.server.providers.proxy import ProxyClient
+    from grok_local_bridge.config import ConnectConfig
+    import grok_local_bridge.composition as composition
+
+    backend = FastMCP("SYNTHETIC backend refusal")
+
+    @backend.tool
+    def read_guarded() -> ToolResult:
+        return ToolResult(content="SYNTHETIC backend refused this read", is_error=True)
+
+    config = ConnectConfig.model_validate({"backends": [{
+        "name": "guard", "transport": "stdio", "command": sys.executable,
+        "tools": [{"name": "read_guarded"}]
+    }]})
+    monkeypatch.setattr(composition, "backend_client", lambda *args: ProxyClient(backend))
+    observations = SafeObservations()
+    async with Client(composition.build_server(config, observations=observations), mode="legacy") as client:
+        result = await client.call_tool("guard_read_guarded", raise_on_error=False)
+        assert result.is_error
+    outcomes = [e["outcome"] for e in observations.events if e.get("tool") == "guard_read_guarded"]
+    assert outcomes == ["allowed", "error"]
+    assert "SYNTHETIC backend refused this read" not in json.dumps(observations.events)
