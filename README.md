@@ -4,9 +4,9 @@
 
 本项目提供这个连接入口。它不会自动获得你电脑的全部权限；只有你明确添加的 MCP 后端和工具可以被调用。
 
-**v0.1.1-alpha candidate · Experimental · Windows x64 / Python 3.13**
+**v0.1.1-alpha · Experimental · Windows x64 / Python 3.13**
 
-[Windows 内测指南](docs/windows-beta-guide.md) · [候选版变更](docs/release-v0.1.1-alpha.md) · [English](README_EN.md) · [架构与选型](docs/architecture.md) · [安全边界](docs/security.md) · [故障诊断](docs/troubleshooting.md) · [验收范围](docs/validation.md)
+[Windows 内测指南](docs/windows-beta-guide.md) · [版本变更](docs/release-v0.1.1-alpha.md) · [English](README_EN.md) · [架构与选型](docs/architecture.md) · [安全边界](docs/security.md) · [故障诊断](docs/troubleshooting.md) · [验收范围](docs/validation.md)
 
 ## 当前能做什么
 
@@ -116,7 +116,7 @@ python -m venv .venv
 
 CI 使用 Windows、合成后端和假 Tunnel，无需账号秘密。首次安装依赖需要网络；测试本身不创建公网连接。验收范围见 [validation.md](docs/validation.md)。
 
-v0.1.0-alpha 已完成真实 GrokBot 双合成工具回归。下一步优先外部内测者的干净 Windows 首装；本开发机不再模拟干净系统。候选版的测试与下载以对应提交 CI 为准，稳定 origin 的外部恢复仍待验证。没有承诺通用设备或任意程序适配器的完成时间。
+v0.1.0-alpha 已完成真实 GrokBot 双合成工具回归。下一步优先外部内测者的干净 Windows 首装；本开发机不再模拟干净系统。本预发布版的源码提交与校验值以 Release Manifest 为准，自动检查见对应提交 CI，稳定 origin 的外部恢复仍待验证。没有承诺通用设备或任意程序适配器的完成时间。
 
 ## 来源、贡献与许可证
 

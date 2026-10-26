@@ -1,16 +1,16 @@
 # Windows 内测：先完成无公网测试
 
-对象：Windows x64、PowerShell 5.1、完整 Python 3.13（包含 Tcl/Tk）。这是实验性候选版；真正干净 Windows 首装、winget 自动安装与首次授权窗口仍待外部内测。基础测试不需要 Node、Filesystem、Attention Router 或历史凭据。
+对象：Windows x64、PowerShell 5.1、完整 Python 3.13（包含 Tcl/Tk）。这是 v0.1.1-alpha 实验性预发布版；真正干净 Windows 首装、winget 自动安装与首次授权窗口仍待外部内测。基础测试不需要 Node、Filesystem、Attention Router 或历史凭据。
 
 ## 1. 下载与安装
 
-从维护者提供的准确提交/PR 链接下载。推荐打开该提交的绿色 **Windows offline validation** Actions 运行，在 Artifacts 下载 `candidate-v0.1.1-alpha-<commit>`（GitHub 通常要求登录）。解开外层 artifact ZIP 后，取得源码 ZIP、`RELEASE_MANIFEST.json` 和 `SHA256SUMS.txt`。核对 manifest 的 `source_commit` 是指定提交，并核对源码 ZIP 的 SHA-256：
+从 [v0.1.1-alpha Release](https://github.com/Tkkdy/grok-local-bridge/releases/tag/v0.1.1-alpha) 下载 `grok-local-bridge-v0.1.1-alpha.zip`、`RELEASE_MANIFEST.json` 和 `SHA256SUMS.txt`。核对 manifest 的 `source_commit` 与该 Tag 指向的源码提交一致，再核对源码 ZIP 的 SHA-256。不要使用页面自动生成的 Source code ZIP 来匹配这份校验值：
 
 ```powershell
 Get-FileHash .\grok-local-bridge-v0.1.1-alpha.zip -Algorithm SHA256
 ```
 
-也可用维护者提供的 `/archive/<准确提交>.zip`：来自同一提交，但不是上述构建包，文件名、包装层及 SHA-256 不同，不能与构建包的 SHA256SUMS 混比。正式 Release 发布后优先下载 Release 源码包；此文档不代表已经发布。
+也可用维护者提供的 `/archive/<准确提交>.zip`：来自同一提交，但不是上述构建包，文件名、包装层及 SHA-256 不同，不能与构建包的 SHA256SUMS 混比。优先使用上述 Release 附件。CI 的 `candidate-v0.1.1-alpha-<commit>` 也可测试，但下载通常要求 GitHub 登录，且会过期；它不是永久下载入口。
 
 解压源码，在含 `pyproject.toml` 和 `scripts` 的目录打开 PowerShell，不要覆盖旧安装。首次安装需要联网访问 PyPI/GitHub；即使不启动公网，默认仍下载 cloudflared。
 

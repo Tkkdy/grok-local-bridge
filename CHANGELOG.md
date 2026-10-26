@@ -1,8 +1,8 @@
 # Changelog
 
-## v0.1.1-alpha — Candidate, not published
+## v0.1.1-alpha — 2026-10-26 (Pre-release)
 
-Detect missing Tcl/Tk before installation and report owner-window readiness in doctor. Clarify Python bootstrap commands and add a tested optional official Filesystem MCP read-only recipe. Preserve backend MCP error results while recording their audit outcome as error instead of ok. Include the optional backend manifest in installations, provide a Windows beta guide, and build commit-identified CI candidate archives. Node/Filesystem remain optional. Original v0.1.0-alpha failures and acceptance limits are preserved; clean Windows first installation is an external beta gate.
+Detect missing Tcl/Tk before installation and report owner-window readiness in doctor. Clarify Python bootstrap commands and add a tested optional official Filesystem MCP read-only recipe. Preserve backend MCP error results while recording their audit outcome as error instead of ok. Include the optional backend manifest in installations, provide a Windows beta guide, and build commit-identified source archives. Node/Filesystem remain optional. Original v0.1.0-alpha failures and acceptance limits are preserved; clean Windows first installation is an external beta gate.
 
 ## v0.1.0-alpha — Experimental
 
